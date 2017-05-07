@@ -1,1 +1,1 @@
-# EasyMakeSharedLib
+EasyMakeSharedLib - project containing Makefile snippet (c++11, GCC) for building shared library in Linux. Makefile contains default target and clean, also it is copy all headers file into 'include' directory.
