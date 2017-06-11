@@ -7,9 +7,12 @@
 CXX = g++
 CXXFLAGS = -g -O2 -Wall
 # 2. Compiler And Linker Keys (man gcc)
-LIB_NAME = libMySharedLib.so
+PROJECT_NAME = libMySharedLib
+LIB_NAME = $(PROJECT_NAME).so
 LIB_VERSION_OPTION = 1.0
 LIB_BUILD_DIRECTORY = .
+LIB_INSTALL_DIR = /usr/lib
+LIB_INCLUDE_DIR = /usr/include/$(PROJECT_NAME)
 
 LIB_COMPILE_OPTION = -fPIC
 LIB_LINK_OPTION = -shared
@@ -65,7 +68,8 @@ create-build-dir:
 	@ -mkdir -p $(LIB_BUILD_DIRECTORY)
 	
 $(CPP_SHARED_LIB):$(C_OBJFILES) $(CPP_OBJFILES)
-	$(CXX) $(CXXFLAGS) $(LANG_OPTION) $(LIB_LINK_OPTION) $(DEFS) $(INCLUDES) $(LIBPATH) $(LIBS) -o $(CPP_SHARED_LIB) $(CPP_OBJFILES)
+	$(CXX) $(LIB_LINK_OPTION)$(LIBPATH) $(LIBS) -o $(CPP_SHARED_LIB) $(CPP_OBJFILES)
+	@ ln -s $(CPP_SHARED_LIB) $(LIB_NAME)
 
 # These are the suffix replacement rules
 %.o : %.c
@@ -77,7 +81,18 @@ $(CPP_SHARED_LIB):$(C_OBJFILES) $(CPP_OBJFILES)
 clean:
 	@ -rm -f $(CPP_OBJFILES)
 	@ -rm -f $(CPP_SHARED_LIB)
+	@ -rm -f $(LIB_NAME)
 	@ -rm -rf $(LIB_BUILD_DIRECTORY)/include
+	
+install:
+	@ cp $(CPP_SHARED_LIB) $(LIB_INSTALL_DIR)
+	@ ln -s $(LIB_INSTALL_DIR)/$(LIB_NAME).$(LIB_VERSION_OPTION) $(LIB_INSTALL_DIR)/$(LIB_NAME)
+	@ mkdir $(LIB_INCLUDE_DIR)
+
+uninstall:
+	@ rm $(LIB_INSTALL_DIR)/$(LIB_NAME).$(LIB_VERSION_OPTION)
+	@ rm $(LIB_INSTALL_DIR)/$(LIB_NAME)
+	@ rm -rf $(LIB_INCLUDE_DIR)
 
 copy-include:
 	@ mkdir -p $(LIB_BUILD_DIRECTORY)/include
